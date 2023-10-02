@@ -2,6 +2,8 @@
 
 Introducing Photo Detail Enhancer – Your Ultimate Photo Companion
 
+!!! Only lists Screenshots album in Photos !!!
+
 Unleash the power of Photo Detail Enhancer, an innovative app inspired by Apple's renowned Photo detail view in the Photos iOS App. 
 Our app not only simplifies photo management but also introduces cutting-edge features designed to enhance your photography experience.
 
