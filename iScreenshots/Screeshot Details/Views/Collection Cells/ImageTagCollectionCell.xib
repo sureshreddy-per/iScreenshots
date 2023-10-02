@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="21701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21679"/>
+        <capability name="Image references" minToolsVersion="12.0"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="ImageTagCollectionCell" id="gTV-IL-0wX" customClass="ImageTagCollectionCell" customModule="HeyAlle" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="655" height="37"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                <rect key="frame" x="0.0" y="0.0" width="655" height="37"/>
+                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                <subviews>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="d9g-Uz-L7c">
+                        <rect key="frame" x="0.0" y="0.0" width="655" height="37"/>
+                        <subviews>
+                            <stackView opaque="NO" contentMode="scaleToFill" alignment="center" spacing="6" translatesAutoresizingMaskIntoConstraints="NO" id="Shd-jL-Ya7">
+                                <rect key="frame" x="8" y="0.0" width="639" height="37"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MHD-2G-zyW">
+                                        <rect key="frame" x="0.0" y="9.6666666666666643" width="613" height="18"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <button opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="OVV-9N-o84">
+                                        <rect key="frame" x="619" y="8.6666666666666643" width="20" height="20"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="20" id="ZCY-pi-ahn"/>
+                                            <constraint firstAttribute="height" constant="20" id="u3e-oM-E5N"/>
+                                        </constraints>
+                                        <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <state key="normal" title="Button"/>
+                                        <buttonConfiguration key="configuration" style="plain">
+                                            <imageReference key="image" image="plus" catalog="system" symbolScale="small"/>
+                                            <preferredSymbolConfiguration key="preferredSymbolConfigurationForImage" scale="small" weight="thin"/>
+                                        </buttonConfiguration>
+                                    </button>
+                                </subviews>
+                            </stackView>
+                        </subviews>
+                        <color key="backgroundColor" red="0.99607843159999998" green="0.97254902119999997" blue="0.8392156959" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="Shd-jL-Ya7" secondAttribute="trailing" constant="8" id="Agl-9e-Eqz"/>
+                            <constraint firstItem="Shd-jL-Ya7" firstAttribute="leading" secondItem="d9g-Uz-L7c" secondAttribute="leading" constant="8" id="RnM-w0-hm2"/>
+                            <constraint firstItem="Shd-jL-Ya7" firstAttribute="centerX" secondItem="d9g-Uz-L7c" secondAttribute="centerX" id="hTR-kZ-UKe"/>
+                            <constraint firstAttribute="bottom" secondItem="Shd-jL-Ya7" secondAttribute="bottom" id="kei-Wm-64V"/>
+                            <constraint firstItem="Shd-jL-Ya7" firstAttribute="centerY" secondItem="d9g-Uz-L7c" secondAttribute="centerY" id="wcx-2X-HrT"/>
+                            <constraint firstItem="Shd-jL-Ya7" firstAttribute="top" secondItem="d9g-Uz-L7c" secondAttribute="top" id="zix-qd-FlL"/>
+                        </constraints>
+                    </view>
+                </subviews>
+            </view>
+            <viewLayoutGuide key="safeArea" id="ZTg-uK-7eu"/>
+            <constraints>
+                <constraint firstAttribute="bottom" secondItem="d9g-Uz-L7c" secondAttribute="bottom" id="8UE-Fp-NHo"/>
+                <constraint firstItem="d9g-Uz-L7c" firstAttribute="top" secondItem="gTV-IL-0wX" secondAttribute="top" id="9lh-15-0AY"/>
+                <constraint firstAttribute="trailing" secondItem="d9g-Uz-L7c" secondAttribute="trailing" id="UBD-lp-R1T"/>
+                <constraint firstItem="d9g-Uz-L7c" firstAttribute="leading" secondItem="gTV-IL-0wX" secondAttribute="leading" id="WGM-hg-Zwd"/>
+            </constraints>
+            <size key="customSize" width="655" height="37"/>
+            <connections>
+                <outlet property="mBackgroundView" destination="d9g-Uz-L7c" id="6ld-D3-l4O"/>
+                <outlet property="mRearButton" destination="OVV-9N-o84" id="BWZ-S6-QpS"/>
+                <outlet property="mTitle" destination="MHD-2G-zyW" id="teV-iC-AGi"/>
+            </connections>
+            <point key="canvasLocation" x="600.76335877862596" y="15.845070422535212"/>
+        </collectionViewCell>
+    </objects>
+    <resources>
+        <image name="plus" catalog="system" width="128" height="113"/>
+    </resources>
+</document>
