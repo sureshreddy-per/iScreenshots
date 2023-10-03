@@ -228,11 +228,11 @@ extension ViewController: ImageDetailCollectionCellDelegate {
     }
     
     func handleImageTap() {
-        
-        mBottomTabBar.isHidden = !mBottomTabBar.isHidden
-        navigationController?.setNavigationBarHidden(viewModel.isInfoSelected ? true : mBottomTabBar.isHidden, animated: true)
-        bottomSlidingBar.isHidden = viewModel.isInfoSelected ? true : mBottomTabBar.isHidden
-        view.backgroundColor = mBottomTabBar.isHidden ? .black : .white
+        let newState = !mBottomTabBar.isHidden
+        mBottomTabBar.isHidden = viewModel.isInfoSelected ? false : newState
+        navigationController?.setNavigationBarHidden(viewModel.isInfoSelected ? true : newState, animated: true)
+        bottomSlidingBar.isHidden = viewModel.isInfoSelected ? true : newState
+        view.backgroundColor = newState ? .black : .white
     }
     
     // Handle the edit button selection for a cell.

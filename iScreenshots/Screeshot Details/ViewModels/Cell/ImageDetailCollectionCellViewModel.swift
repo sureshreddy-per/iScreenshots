@@ -26,7 +26,6 @@ final class ImageDetailCollectionCellViewModel {
     var delegate: ((ImageDetailCollectionCellViewModelDelegate) -> Void)?
     private let totalTagsSupported: Int = 10
     private let totalSelectedTags: Int = 2
-    private let visionImageSize = CGSize(width: 480, height: 720)
     
     // MARK: - Initialization
     
@@ -103,15 +102,16 @@ final class ImageDetailCollectionCellViewModel {
     // MARK: - Image Asset Fetching and OCR
     
     func fetchImageAsset(_ asset: PHAsset, completionHandler: ((UIImage?) -> Void)?) {
-        let resultHandler: (UIImage?, [AnyHashable: Any]?) -> Void = { image, info in
+        let options = PHImageRequestOptions()
+        options.version = .original
+        options.isSynchronous = true
+        PHImageManager.default().requestImageDataAndOrientation(for: asset, options: nil) { data, _, _, _ in
+            guard let data = data, let image = UIImage(data: data) else {
+                completionHandler?(nil) // Asset is nil, return failure.
+                return
+            }
             completionHandler?(image)
         }
-        PHImageManager.default().requestImage(
-            for: asset,
-            targetSize: visionImageSize,
-            contentMode: .aspectFill,
-            options: nil,
-            resultHandler: resultHandler)
     }
     
     func performOCR(for image: UIImage) {
