@@ -39,7 +39,9 @@ final class ViewModel: NSObject, PHPhotoLibraryChangeObserver {
         // Check and request photo library permission if necessary.
         getPermissionIfNecessary { granted in
             guard granted else { return }
-            self.fetchAssets()
+            DispatchQueue.global(qos: .userInitiated).async {
+                self.fetchAssets()
+            }
         }
         // Register as an observer for photo library changes.
         PHPhotoLibrary.shared().register(self)
