@@ -5,7 +5,7 @@
 //  Created by Suresh Reddy on 02/10/23.
 //
 
-import Foundation
+import UIKit
 // Enum that defines the possible delegate actions for the ImageDetailCollectionCellViewModel.
 enum ImageDetailCollectionCellViewModelDelegate {
     // Indicates a need to refresh the associated view.
@@ -13,6 +13,8 @@ enum ImageDetailCollectionCellViewModelDelegate {
     
     // Indicates a need to update the image description in the view.
     case updateDescription
+    
+    case updateImage(image: UIImage)
 }
 
 protocol ImageDetailCollectionCellDelegate: AnyObject {

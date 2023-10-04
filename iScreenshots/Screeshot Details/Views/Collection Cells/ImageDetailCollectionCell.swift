@@ -24,7 +24,9 @@ final class ImageDetailCollectionCell: UICollectionViewCell {
     @IBOutlet weak var mainVerticleStackView: UIStackView!
     @IBOutlet weak var infoBaseView: UIView!
     @IBOutlet weak var mCollectionViewHeight: NSLayoutConstraint!
-    
+    @IBOutlet weak var collectionLoader: UIActivityIndicatorView!
+    @IBOutlet weak var descriptionLoader: UIActivityIndicatorView!
+
     // Reuse identifier for the cell.
     static let reuseIdentifier = "ImageDetailCollectionCell"
     
@@ -76,10 +78,16 @@ final class ImageDetailCollectionCell: UICollectionViewCell {
             case .refresh:
                 DispatchQueue.main.async {
                     self?.updateTagsCollectionView()
+                    self?.collectionLoader.stopAnimating()
                 }
             case .updateDescription:
                 DispatchQueue.main.async {
                     self?.updateDescription()
+                    self?.descriptionLoader.stopAnimating()
+                }
+            case .updateImage(image: let image):
+                DispatchQueue.main.async {
+                    self?.mainImageView.image = image
                 }
             }
         }
@@ -94,11 +102,12 @@ final class ImageDetailCollectionCell: UICollectionViewCell {
     // This method configures the UI elements of the cell with the provided view model.
     func configureUI(with viewModel: ImageDetailCollectionCellViewModel) {
         self.viewModel = viewModel
+        collectionLoader.startAnimating()
+        descriptionLoader.startAnimating()
         addViewModelBinding()
         noteTextField.text = viewModel.imageNote
         updateDescription()
         updateInfoBaseViewStatus(isHidden: !viewModel.isInfoNeedToShow)
-        mainImageView.fetchImageAsset(viewModel.imageData, targetSize: mainImageView.bounds.size, completionHandler: nil)
         updateTagsCollectionView()
     }
     
@@ -172,6 +181,9 @@ final class ImageDetailCollectionCell: UICollectionViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         noteTextField.text = ""
+        if let requestId = viewModel?.imageRequestId {
+            PHImageManager.default().cancelImageRequest(requestId)
+        }
         viewModel = nil
     }
 

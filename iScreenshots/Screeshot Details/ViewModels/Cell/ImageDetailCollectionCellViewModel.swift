@@ -17,11 +17,12 @@ final class ImageDetailCollectionCellViewModel {
     var isInfoNeedToShow: Bool
     var tags: [String]
     var allOtherTags: [String] = []
-    var imageDescription: String = "Text extraction from the image appears to be unsuccessful."
+    var imageDescription: String = ""
     var cellModels = [ImageTagCollectionCellViewModel]()
     var totalTagsWidth: CGFloat = 0
     let cellInset: CGFloat = 8
     var imageNote: String = ""
+    var imageRequestId: PHImageRequestID?
     let imagePredictor = ImagePredictor()
     var delegate: ((ImageDetailCollectionCellViewModelDelegate) -> Void)?
     private let totalTagsSupported: Int = 10
@@ -34,13 +35,16 @@ final class ImageDetailCollectionCellViewModel {
         self.isInfoNeedToShow = isInfoSelected
         self.tags = tags
         
+    }
+    
+    func fetchImage(){
         // Fetch the image asset and perform OCR and image classification
-        fetchImageAsset(image) { [weak self] image in
+        fetchImageAsset(imageData) { [weak self] image in
             guard let image = image else {
                 self?.prepareCellModels()
                 return
             }
-            
+            self?.delegate?(.updateImage(image: image))
             DispatchQueue.global(qos: .userInitiated).async {
                 self?.performOCR(for: image)
                 self?.classifyImage(image)
@@ -105,7 +109,7 @@ final class ImageDetailCollectionCellViewModel {
         let options = PHImageRequestOptions()
         options.version = .original
         options.isSynchronous = true
-        PHImageManager.default().requestImageDataAndOrientation(for: asset, options: nil) { data, _, _, _ in
+        imageRequestId = PHImageManager.default().requestImageDataAndOrientation(for: asset, options: nil) { data, _, _, _ in
             guard let data = data, let image = UIImage(data: data) else {
                 completionHandler?(nil) // Asset is nil, return failure.
                 return
@@ -117,22 +121,30 @@ final class ImageDetailCollectionCellViewModel {
     func performOCR(for image: UIImage) {
         // Convert UIImage to CIImage
         guard let ciImage = CIImage(image: image) else {
-            // Handle the case where the conversion fails
+            self.imageDescription = "Text extraction from the image appears to be unsuccessful."
+            self.delegate?(.updateDescription)
             return
         }
         
         // Create a request for text recognition
         let textRecognitionRequest = VNRecognizeTextRequest { [weak self] request, error in
-            guard let observations = request.results as? [VNRecognizedTextObservation] else { return }
+            guard let observations = request.results as? [VNRecognizedTextObservation] else {
+                self?.imageDescription = "Text extraction from the image appears to be unsuccessful."
+                self?.delegate?(.updateDescription)
+                return
+            }
             
             var recognizedText = ""
             for observation in observations {
-                guard let topCandidate = observation.topCandidates(1).first else { continue }
+                guard let topCandidate = observation.topCandidates(1).first else {
+                    continue }
                 recognizedText += topCandidate.string + " "
             }
             
             // Update the description field with the recognized text
             guard !recognizedText.isEmpty else {
+                self?.imageDescription = "Text extraction from the image appears to be unsuccessful."
+                self?.delegate?(.updateDescription)
                 return
             }
             self?.imageDescription = recognizedText
@@ -145,8 +157,8 @@ final class ImageDetailCollectionCellViewModel {
         do {
             try textRecognitionRequestHandler.perform([textRecognitionRequest])
         } catch {
-            // Handle the error
-            print("Error performing text recognition: \(error.localizedDescription)")
+            self.imageDescription = "Text extraction from the image appears to be unsuccessful."
+            self.delegate?(.updateDescription)
         }
     }
 }

@@ -74,7 +74,6 @@ final class ImageViewBottomAccessoryView: UIView {
     }
     
     func updateScrolledItem(at indexPath: IndexPath) {
-        mCollectionView.reloadData()
         mCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
     }
 }
@@ -84,11 +83,11 @@ final class ImageViewBottomAccessoryView: UIView {
 extension ImageViewBottomAccessoryView: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return viewModel?.allPhotosArray.count ?? 0
+        return viewModel?.allPhotos.count ?? 0
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let asset = viewModel?.allPhotosArray[indexPath.item], let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BottomSlideImageCollectionCell.reuseIdentifier, for: indexPath) as? BottomSlideImageCollectionCell else {
+        guard let asset = viewModel?.allPhotos[indexPath.item], let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BottomSlideImageCollectionCell.reuseIdentifier, for: indexPath) as? BottomSlideImageCollectionCell else {
             fatalError("Unable to dequeue BottomSlideImageCollectionCell")
         }
 

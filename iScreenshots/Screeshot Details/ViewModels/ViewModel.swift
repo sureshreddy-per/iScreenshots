@@ -7,6 +7,7 @@
 
 import Foundation
 import Photos
+import UIKit
 // MARK: - View Model Class
 
 // This class represents the ViewModel for the main view controller.
@@ -16,12 +17,9 @@ final class ViewModel: NSObject, PHPhotoLibraryChangeObserver {
     
     // A closure to notify the delegate of ViewModel-related events.
     var delegate: ((ViewModelDelegate) -> Void)?
-    
-    // An array containing all photos as PHAsset objects.
-    private var allPhotos = PHFetchResult<PHAsset>()
-    
+        
     // An array containing all photos as PHAsset objects for easy access.
-    var allPhotosArray: [PHAsset] = []
+    var allPhotos: [PHAsset] = []
     
     // The currently selected index path in the collection view.
     var selectedIndexPath: IndexPath = IndexPath(row: 0, section: 0)
@@ -32,6 +30,12 @@ final class ViewModel: NSObject, PHPhotoLibraryChangeObserver {
     // An array of cell view models for populating the collection view.
     var cellModels = [ImageDetailCollectionCellViewModel]()
     
+    var selectedImage: UIImage?
+    
+    lazy var cachingImageManager: PHCachingImageManager = {
+        return PHCachingImageManager()
+    }()
+
     // MARK: - Initialization
     
     override init() {
@@ -86,30 +90,32 @@ final class ViewModel: NSObject, PHPhotoLibraryChangeObserver {
     
     // Fetch all photos from the photo library and populate the cell models.
     func fetchAssets() {
+        
         let allPhotosOptions = PHFetchOptions()
-        allPhotosOptions.predicate = NSPredicate(format: "mediaSubtype == %ld", PHAssetMediaSubtype.photoScreenshot.rawValue)
-
+        allPhotosOptions.predicate = NSPredicate(format: "mediaType == %ld", PHAssetMediaType.image.rawValue)
+        
         allPhotosOptions.sortDescriptors = [
             NSSortDescriptor(key: "creationDate", ascending: false)
         ]
-        allPhotos = PHAsset.fetchAssets(with: allPhotosOptions)
-        allPhotos.enumerateObjects { [weak self] asset, _, _ in
+        let allPhotosResults = PHAsset.fetchAssets(with: allPhotosOptions)
+        allPhotosResults.enumerateObjects { [weak self] asset, _, _ in
             self?.cellModels.append(ImageDetailCollectionCellViewModel(image: asset, isInfoSelected: self?.isInfoSelected ?? false, tags: []))
-            self?.allPhotosArray.append(asset)
+            self?.allPhotos.append(asset)
         }
         delegate?(.refresh) // Notify the delegate to refresh the view.
+                
+//        cachingImageManager.startCachingImages(for: allPhotos, targetSize: CGSize(width: 1000, height: 2000), contentMode: .aspectFill, options: nil)
+
     }
     
     // MARK: - Photo Library Change Observer
     
     // Handle changes in the photo library, such as additions or deletions of photos.
     func photoLibraryDidChange(_ changeInstance: PHChange) {
-        DispatchQueue.main.sync {
-            if let changeDetails = changeInstance.changeDetails(for: allPhotos) {
-                allPhotos = changeDetails.fetchResultAfterChanges
-            }
+//            if let changeDetails = changeInstance.changeDetails(for: allPhotos) {
+//                allPhotos = changeDetails.fetchResultAfterChanges
+//            }
             self.delegate?(.refresh) // Notify the delegate to refresh the view.
-        }
     }
     
     // MARK: - Update Methods
@@ -122,7 +128,7 @@ final class ViewModel: NSObject, PHPhotoLibraryChangeObserver {
     // Delete a photo from the cell models and the allPhotosArray.
     func delete(photo: PHAsset) {
         cellModels = cellModels.filter { photo != $0.imageData }
-        allPhotosArray = allPhotosArray.filter { photo != $0 }
+        allPhotos = allPhotos.filter { photo != $0 }
         if selectedIndexPath.row < cellModels.count {
             selectedIndexPath = IndexPath(row: selectedIndexPath.row, section: 0)
         } else {
@@ -131,7 +137,8 @@ final class ViewModel: NSObject, PHPhotoLibraryChangeObserver {
         self.delegate?(.refresh) // Notify the delegate to refresh the view.
     }
     
-    func deletePhotoInGallery(asset: PHAsset) {
+    func deletePhotoInGallery() {
+        let asset = allPhotos[selectedIndexPath.row]
         // Attempt to delete the asset
         PHPhotoLibrary.shared().performChanges({
             PHAssetChangeRequest.deleteAssets([asset] as NSArray)
@@ -158,4 +165,20 @@ final class ViewModel: NSObject, PHPhotoLibraryChangeObserver {
         cellModels[selectedIndexPath.row].updateTags(newTags)
         self.delegate?(.refresh) // Notify the delegate to refresh the view.
     }
+    
+    // MARK: - Image Asset Fetching
+    
+    func fetchImageAsset(_ index: Int, completionHandler: ((UIImage?) -> Void)?) {
+        let options = PHImageRequestOptions()
+        options.version = .original
+        options.isSynchronous = false
+        PHImageManager.default().requestImageDataAndOrientation(for: allPhotos[index], options: nil) { data, _, _, _ in
+            guard let data = data, let image = UIImage(data: data) else {
+                completionHandler?(nil) // Asset is nil, return failure.
+                return
+            }
+            completionHandler?(image)
+        }
+    }
+
 }

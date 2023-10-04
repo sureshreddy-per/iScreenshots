@@ -17,7 +17,7 @@ extension UIImageView {
                 
         let options = PHImageRequestOptions()
         options.version = .original
-        options.isSynchronous = true
+        options.isSynchronous = false
         PHImageManager.default().requestImageDataAndOrientation(for: asset, options: nil) { data, _, _, _ in
             guard let data = data, let image = UIImage(data: data) else {
                 completionHandler?(false) // Asset is nil, return failure.

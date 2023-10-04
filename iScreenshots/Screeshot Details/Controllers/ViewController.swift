@@ -147,7 +147,7 @@ final class ViewController: UIViewController, UITabBarDelegate, UIScrollViewDele
             navigationController?.setNavigationBarHidden(viewModel.isInfoSelected, animated: true)
             showInfoForSelected()
         case .delete:
-            showDeleteConfirmationScreen()
+            viewModel.deletePhotoInGallery()
         }
     }
     
@@ -182,20 +182,11 @@ final class ViewController: UIViewController, UITabBarDelegate, UIScrollViewDele
         let shareController = UIActivityViewController(activityItems: [image], applicationActivities: nil)
         present(shareController, animated: true)
     }
-    
-    // Show the delete confirmation screen for the selected image.
-    private func showDeleteConfirmationScreen() {
-        guard let cell = collectionView.cellForItem(at: viewModel.selectedIndexPath) as? ImageDetailCollectionCell,
-              let photo = cell.viewModel?.imageData else {
-            return
-        }
-        viewModel.deletePhotoInGallery(asset: photo)
-    }
 }
 
 // MARK: - UICollectionViewDataSource
 
-extension ViewController: UICollectionViewDataSource {
+extension ViewController: UICollectionViewDataSource, UICollectionViewDelegate {
     
     // Return the number of items in the collection view.
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -213,6 +204,10 @@ extension ViewController: UICollectionViewDataSource {
         cell.delegate = self
         cell.configureUI(with: model)
         return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        viewModel.cellModels[indexPath.item].fetchImage()
     }
 }
 
