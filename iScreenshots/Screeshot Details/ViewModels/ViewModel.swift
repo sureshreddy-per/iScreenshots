@@ -92,7 +92,7 @@ final class ViewModel: NSObject, PHPhotoLibraryChangeObserver {
     func fetchAssets() {
         
         let allPhotosOptions = PHFetchOptions()
-        allPhotosOptions.predicate = NSPredicate(format: "mediaType == %ld", PHAssetMediaType.image.rawValue)
+        allPhotosOptions.predicate = NSPredicate(format: "mediaSubtype == %ld", PHAssetMediaSubtype.photoScreenshot.rawValue)
         
         allPhotosOptions.sortDescriptors = [
             NSSortDescriptor(key: "creationDate", ascending: false)
